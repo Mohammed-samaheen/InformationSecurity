@@ -3,26 +3,28 @@ from util.common import *
 from util.pyDH import *
 from util.dialog import *
 
+# creat client socket
 player, BUFFER_DIR, BUFFER_FILE_NAME = user_inf()
 buffer_path = BUFFER_DIR + BUFFER_FILE_NAME
 _socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 _socket.connect(buffer_path)
 
+# diffie hellman key exchange
 d1 = DiffieHellman()
-
 local_key = d1.gen_public_key()
 bank_public_key = int(_socket.recv(2048).decode())
 _socket.sendall(pad(local_key, 2048))
 shared = d1.gen_shared_key(bank_public_key)
 
+# pass key to ARS to symmetric encryption
 aes = AES(shared)
 dialog = Dialog('print')
 
 dialog.welcome('welcome to our bank application')
 dialog.chat(shared + '\n')
 dialog.info("Are you a new user (y,n)")
-
 answer = input()
+
 
 if answer in ('y', 'Y', 'yes', 'Yes'):
     _socket.sendall('1'.encode())
