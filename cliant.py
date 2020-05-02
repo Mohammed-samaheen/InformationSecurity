@@ -30,6 +30,8 @@ if answer in ('y', 'Y', 'yes', 'Yes'):
     Password = input("Enter password: ")
 
     while not password_checker(Password):
+        dialog.prompt('Passwords must be at least 5 characters,upper case letter,\n'
+                      'least two numbers,least one special symbol\n ')
         Password = input("Enter password: ")
 
     _socket.sendall(aes.decrypt(Username))
